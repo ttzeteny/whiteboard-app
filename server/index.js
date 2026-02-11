@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const port = 3001;
 
 const app = express();
 
@@ -17,13 +18,13 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-    console.log('User connected: ${socket.id}');
+    console.log('User connected');
 
     socket.on("disconnect", () => {
-        console.log('User disconnected', socket.id);
+        console.log('User disconnected');
     });
 });
 
-server.listen(3001, () => {
-    console.log("Server is running  on port 3001");
+server.listen(port, () => {
+    console.log("Server is running  on port: ", port);
 });
