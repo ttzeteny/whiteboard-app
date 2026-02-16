@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import '../App.css';
 import Board from "../Board";
 
 const socket = io.connect("http://localhost:3001");
 
-function App() {
+function Dashboard() {
+  const navigate = useNavigate();
+
   const [rooms, setRooms] = useState([]);
   const [currentRoom, setCurrentRoom] = useState(null);
 
@@ -17,8 +20,20 @@ function App() {
   const [showJoinModal, setShowJoinModal] = useState(false);
   
   const [newRoomName, setNewRoomName] = useState("");
-  const [usernameInput, setUsernameInput] = useState("");
   const [roomToJoinId, setRoomToJoinId] = useState(null);
+  const [roomToJoinName, setRoomToJoinName] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (!token || !storedUser) {
+      navigate("/login");
+    } else {
+      const userObj = JSON.parse(storedUser);
+      setUsername(userObj.name);
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const handleConnect = () => console.log("Connected");
@@ -50,30 +65,27 @@ function App() {
 
   const handleCreateRoom = () => {
     if (newRoomName !== "") {
-      socket.emit("create_room", { name: newRoomName });
+      socket.emit("create_room", {
+         name: newRoomName,
+         creatorName: username
+      });
       setShowCreateModal(false);
     } else {
       alert("Give the room a name!");
     }
   };
 
-  const openJoinModal = (roomId) => {
+  const openJoinModal = (roomId, roomName) => {
     setRoomToJoinId(roomId);
+    setRoomToJoinName(roomName);
     setShowJoinModal(true);
-    setUsernameInput("");
   };
 
   const handleJoinRoom = () => {
-    if (usernameInput !== "") {
-      setUsername(usernameInput);
-      socket.emit("join_room", roomToJoinId);
-      setCurrentRoom(roomToJoinId);
-      setMessageList([]);
-
-      setShowJoinModal(false);
-    } else {
-      alert("Set a username!");
-    }
+    socket.emit("join_room", roomToJoinId);
+    setCurrentRoom(roomToJoinId);
+    setMessageList([]);
+    setShowJoinModal(false);
   };
 
   const sendMessage = async () => {
@@ -96,6 +108,12 @@ function App() {
       setMessageList((list) => [...list, messageData]);
       setCurrentMessage("");
     }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   }
 
   return (
@@ -127,14 +145,7 @@ function App() {
       {showJoinModal && (
         <div className="modal-overlay">
           <div className="modal-box">
-            <h3>Join Room</h3>
-            <p>Set your username!</p>
-            <input 
-              type="text" 
-              placeholder="Your name..." 
-              value={usernameInput}
-              onChange={(e) => setUsernameInput(e.target.value)}
-            />
+            <h3>Join Room '{roomToJoinName}'?</h3>
             <div className="modal-actions">
               <button className="btn-secondary" onClick={() => setShowJoinModal(false)}>Cancel</button>
               <button className="btn-primary" onClick={handleJoinRoom}>Join</button>
@@ -145,8 +156,11 @@ function App() {
 
       <nav className="navbar">
         <h1><a href="/">BOARD IT</a></h1>
-        <h1><a href="/">Log out</a></h1>
-        {currentRoom && <span style={{color: 'white'}}>Room: {currentRoom} | User: {username}</span>}
+        <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
+            {currentRoom && <span style={{color: 'white', marginRight: '10px'}}>Room: {currentRoom}</span>}
+            <span style={{color: '#ffffff', fontWeight: 'bold'}}>{username}</span>
+            <button onClick={handleLogout} className="btn-secondary" style={{padding: '5px 12px', fontSize: '0.85rem'}}>Log out</button>
+        </div>
       </nav>
 
       <main className="main-content">
@@ -160,8 +174,8 @@ function App() {
               {rooms.map((room) => (
                 <div key={room.id} className="room-card">
                   <h3>{room.name}</h3>
-                  <p>{room.creator ? room.creator.substring(0,5) : "?"}'s room</p>
-                  <button onClick={() => openJoinModal(room.id)}>Join</button>
+                  <p>{room.creator}'s room</p>
+                  <button onClick={() => openJoinModal(room.id, room.name)}>Join</button>
                 </div>
               ))}
             </div>
@@ -211,4 +225,4 @@ function App() {
   );
 }
 
-export default App;
+export default Dashboard;

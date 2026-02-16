@@ -38,7 +38,7 @@ io.on("connection", (socket) => {
         const newRoom = {
             id: generateID(),
             name: data.name,
-            creator: socket.id,
+            creator: data.creatorName || "Anonymous",
             users: []
         };
 

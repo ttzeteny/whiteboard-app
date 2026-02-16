@@ -3,16 +3,36 @@ import { useNavigate, Link } from "react-router-dom";
 
 function Signup() {
 
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordAgain, setPasswordAgain] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    console.log("Signing up:", email);
-    navigate("/login");
+    setError("");
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "An error occured during registration.");
+      }
+
+      alert("Registration successful! You can log in now.");
+      navigate("/login");
+
+    } catch(error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -23,9 +43,10 @@ function Signup() {
         <div className="auth-container">
             <form className="auth-box" onSubmit={handleSignup}>
                 <h2>Create Account</h2>
-                <input type="text" placeholder="Username" onChange={(e) => setUsername(e.target.value)} required />
-                <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+                {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
+                <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} required />
+                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 <input type="password" placeholder="Password again" onChange={(e) => setPasswordAgain(e.target.value)} required />
                 <button type="submit" className="btn-primary">Sign Up</button>
                 <p>Already have an account? <Link to="/login">Login</Link></p>
