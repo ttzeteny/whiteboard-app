@@ -60,7 +60,7 @@ function App() {
   const openJoinModal = (roomId) => {
     setRoomToJoinId(roomId);
     setShowJoinModal(true);
-    setUserNameInput("");
+    setUsernameInput("");
   };
 
   const handleJoinRoom = () => {
@@ -201,9 +201,6 @@ function App() {
           </div>
         )}
       </main>
-    <div style={{ padding: "110px" }}>
-      <h1>Whiteboard Project</h1>
-      <p>Test</p>
     </div>
   );
 }

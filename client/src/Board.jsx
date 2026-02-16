@@ -3,8 +3,8 @@ import "./App.css";
 
 const Board = ({ socket, roomId }) => {
     const canvasRef = useRef(null);
-    const historyRef = useRef([]); 
-    
+    const historyRef = useRef([]);
+
     const [isDrawing, setIsDrawing] = useState(false);
     const [color, setColor] = useState("#000000");
     const [lineWidth, setLineWidth] = useState(5);
@@ -15,10 +15,8 @@ const Board = ({ socket, roomId }) => {
         ctx.beginPath();
         ctx.lineWidth = width;
         ctx.strokeStyle = lineColor;
-        
-        ctx.lineCap = "round"; 
+        ctx.lineCap = "round";
         ctx.lineJoin = "round";
-
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
@@ -38,7 +36,6 @@ const Board = ({ socket, roomId }) => {
         };
 
         setCanvasSize();
-
         window.addEventListener('resize', setCanvasSize);
 
         const handleDrawLine = (data) => {
@@ -48,7 +45,6 @@ const Board = ({ socket, roomId }) => {
 
         const handleHistory = (history) => {
             historyRef.current = history;
-            
             history.forEach(line => {
                 drawLine(line.prevPoint, line.currentPoint, ctx, line.color, line.width);
             });
@@ -62,7 +58,7 @@ const Board = ({ socket, roomId }) => {
             socket.off("draw_line", handleDrawLine);
             socket.off("draw_history", handleHistory);
         };
-    }, [socket]);
+    }, [socket]); 
 
     const prevPoint = useRef(null);
 
@@ -121,21 +117,18 @@ const Board = ({ socket, roomId }) => {
                         setTool("pencil");
                     }}
                 />
-                
                 <button 
                     onClick={() => setTool("pencil")}
                     style={{ fontWeight: tool === "pencil" ? "bold" : "normal" }}
                 >
                     Pencil
                 </button>
-                
                 <button 
                     onClick={() => setTool("eraser")}
                     style={{ fontWeight: tool === "eraser" ? "bold" : "normal" }}
                 >
                     Eraser
                 </button>
-                
                 <input 
                     type="range" min="1" max="20" 
                     value={lineWidth} 
