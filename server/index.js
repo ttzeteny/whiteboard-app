@@ -2,7 +2,7 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
-const authRoutes = require("../routes/authRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const port = 3001;
 
