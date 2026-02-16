@@ -86,5 +86,5 @@ function generateID() {
 }
 
 server.listen(port, () => {
-    console.log("Server is listening on port ", port)
+    console.log("Server is listening on port ", port) //test
 });
