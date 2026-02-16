@@ -201,6 +201,9 @@ function App() {
           </div>
         )}
       </main>
+    <div style={{ padding: "110px" }}>
+      <h1>Whiteboard Project</h1>
+      <p>Test</p>
     </div>
   );
 }
