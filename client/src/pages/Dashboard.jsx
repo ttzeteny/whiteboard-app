@@ -111,9 +111,11 @@ function App() {
               value={newRoomName}
               onChange={(e) => setNewRoomName(e.target.value)}
             />
-            <p>Privacy Settings</p>
+            <h2>Privacy settings</h2>
+            <div className="privacy-actions">
               <button>Private</button>
               <button>Public</button>
+            </div>
             <div className="modal-actions">
               <button className="btn-secondary" onClick={() => setShowCreateModal(false)}>Cancel</button>
               <button className="btn-primary" onClick={handleCreateRoom}>Create</button>
@@ -143,6 +145,7 @@ function App() {
 
       <nav className="navbar">
         <h1><a href="/">BOARD IT</a></h1>
+        <h1><a href="/">Log out</a></h1>
         {currentRoom && <span style={{color: 'white'}}>Room: {currentRoom} | User: {username}</span>}
       </nav>
 

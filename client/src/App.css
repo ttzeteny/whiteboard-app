@@ -401,7 +401,12 @@ h2 {
 .modal-box h3 {
   margin-top: 0;
   color: var(--text-main);
-  font-size: 1.25rem;
+  font-size: 1.5rem;
+}
+
+.modal-box h2 {
+  font-size: 1.45rem;
+  color: rgb(197, 18, 18);
 }
 
 .modal-box :first-of-type p {
@@ -413,10 +418,39 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
+.privacy-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.privacy-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.9375rem;
+  border: none;
+}
+
+.privacy-actions button:first-of-type {
+  background-color: #9f9797;
+  color: white;
+}
+
+.privacy-actions button:nth-child(2) {
+  background-color: #9f9797;
+  color: white;
+}
+
+.privacy-actions button:focus {
+  background-color: #0f172a;
+}
+
 .modal-box input {
   width: 100%;
   padding: 12px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
@@ -437,6 +471,7 @@ h2 {
 .modal-actions button {
   flex: 1;
   padding: 10px;
+  margin-top: 20px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;

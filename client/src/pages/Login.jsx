@@ -8,21 +8,26 @@ function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Add your auth logic here (Firebase, MongoDB, etc.)
     console.log("Logging in:", email);
-    navigate("/dashboard"); // Redirect on success
+    navigate("/dashboard");
   };
 
   return (
-    <div className="auth-container">
-      <form className="auth-box" onSubmit={handleLogin}>
-        <h2>Welcome Back</h2>
-        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-        <button type="submit" className="btn-primary">Login</button>
-        <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
-      </form>
+    <div>
+      <nav className="navbar">
+            <h1><a href="/">BOARD IT</a></h1>
+      </nav>
+      <div className="auth-container">
+          <form className="auth-box" onSubmit={handleLogin}>
+            <h2>Log in</h2>
+            <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
+            <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
+            <button type="submit" className="btn-primary">Login</button>
+            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+          </form>
+      </div>
     </div>
+    
   );
 }
 export default Login;
