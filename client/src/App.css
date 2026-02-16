@@ -91,7 +91,7 @@ h2 {
   border-radius: 50%;
   font-size: 24px;
   display: flex;
-  align-items: center;
+  align-items: normal;
   justify-content: center;
   cursor: pointer;
   box-shadow: var(--shadow-md);
