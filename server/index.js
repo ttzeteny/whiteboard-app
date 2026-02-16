@@ -2,11 +2,16 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
+const authRoutes = require("../routes/authRoutes");
+
 const port = 3001;
 
 const app = express();
 
 app.use(cors());
+app.use(express.json());
+
+app.use("/api/auth", authRoutes);
 
 const server = http.createServer(app);
 
