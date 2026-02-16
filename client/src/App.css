@@ -33,6 +33,7 @@ button {
   overflow: hidden;
 }
 
+
 .navbar {
   background-color: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
@@ -55,11 +56,15 @@ button {
   letter-spacing: -0.5px;
 }
 
+.navbar a {
+  text-decoration: none;
+}
+
 .navbar span {
   font-size: 0.875rem;
   color: var(--text-muted);
   font-weight: 500;
-  background-color: #f1f5f9;
+  background-color: #6366f1;
   padding: 6px 12px;
   border-radius: 20px;
 }
@@ -296,7 +301,7 @@ h2 {
 }
 
 .message-content {
-  padding: 10px 16px;
+  padding: 1px 16px;
   border-radius: 18px;
   font-size: 0.9375rem;
   line-height: 1.4;
@@ -399,6 +404,10 @@ h2 {
   font-size: 1.25rem;
 }
 
+.modal-box :first-of-type p {
+  color: black;
+}
+
 .modal-box p {
   color: var(--text-muted);
   margin-bottom: 1.5rem;
@@ -478,3 +487,4 @@ h2 {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
