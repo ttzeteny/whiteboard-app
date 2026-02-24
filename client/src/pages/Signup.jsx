@@ -14,6 +14,11 @@ function Signup() {
     e.preventDefault();
     setError("");
 
+    if (password != passwordAgain) {
+      setError("Passwords do not match!");
+      return;
+    }
+
     try {
       const response = await fetch("http://localhost:3001/api/auth/register", {
         method: "POST",
@@ -47,7 +52,7 @@ function Signup() {
                 <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} required />
                 <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <input type="password" placeholder="Password again" onChange={(e) => setPasswordAgain(e.target.value)} required />
+                <input type="password" placeholder="Password again" value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} required />
                 <button type="submit" className="btn-primary">Sign Up</button>
                 <p>Already have an account? <Link to="/login">Login</Link></p>
             </form>
