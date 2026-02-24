@@ -9,17 +9,21 @@ const Board = ({ socket, roomId }) => {
     const [color, setColor] = useState("#000000");
     const [lineWidth, setLineWidth] = useState(5);
     const [tool, setTool] = useState("pencil");
+    const prevPoint = useRef(null);
 
     const drawLine = (start, end, ctx, lineColor, width) => {
-        start = start ?? end;
+        if (!start || !end) return;
+
         ctx.beginPath();
         ctx.lineWidth = width;
         ctx.strokeStyle = lineColor;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
+
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);
         ctx.stroke();
+        ctx.closePath();
     };
 
     useEffect(() => {
@@ -31,7 +35,9 @@ const Board = ({ socket, roomId }) => {
             canvas.height = canvas.parentElement.offsetHeight;
             
             historyRef.current.forEach(line => {
-                drawLine(line.prevPoint, line.currentPoint, ctx, line.color, line.width);
+                if (line && line.prevPoint && line.currentPoint) {
+                    drawLine(line.prevPoint, line.currentPoint, ctx, line.color, line.width);
+                }
             });
         };
 
@@ -39,14 +45,21 @@ const Board = ({ socket, roomId }) => {
         window.addEventListener('resize', setCanvasSize);
 
         const handleDrawLine = (data) => {
+            if (!data || !data.prevPoint || !data.currentPoint) return;
             historyRef.current.push(data);
             drawLine(data.prevPoint, data.currentPoint, ctx, data.color, data.width);
         };
 
         const handleHistory = (history) => {
+            if (!Array.isArray(history)) return;
             historyRef.current = history;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
             history.forEach(line => {
-                drawLine(line.prevPoint, line.currentPoint, ctx, line.color, line.width);
+                if (line && line.prevPoint && line.currentPoint) {
+                    drawLine(line.prevPoint, line.currentPoint, ctx, line.color, line.width);
+                }
             });
         };
 
@@ -59,8 +72,6 @@ const Board = ({ socket, roomId }) => {
             socket.off("draw_history", handleHistory);
         };
     }, [socket]); 
-
-    const prevPoint = useRef(null);
 
     const onMouseDown = (e) => {
         setIsDrawing(true);
@@ -106,6 +117,12 @@ const Board = ({ socket, roomId }) => {
         prevPoint.current = null;
     };
 
+    const saveBoard = () => {
+        socket.emit("save_board", roomId);
+        console.log("Board progress saved");
+        alert("Board saved!");
+    };
+
     return (
         <div className="board-container-inner">
             <div className="tools">
@@ -135,6 +152,21 @@ const Board = ({ socket, roomId }) => {
                     onChange={(e) => setLineWidth(e.target.value)} 
                     title="Line Width"
                 />
+                
+                <button 
+                    onClick={saveBoard}
+                    style={{ 
+                        marginLeft: '15px', 
+                        backgroundColor: '#10b981', 
+                        color: 'white', 
+                        border: 'none',
+                        padding: '6px 12px',
+                        borderRadius: '6px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Save
+                </button>
             </div>
 
             <canvas

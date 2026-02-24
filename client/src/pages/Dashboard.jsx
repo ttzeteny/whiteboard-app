@@ -13,6 +13,7 @@ function Dashboard() {
   const [currentRoom, setCurrentRoom] = useState(null);
 
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(null);
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
 
@@ -32,6 +33,7 @@ function Dashboard() {
     } else {
       const userObj = JSON.parse(storedUser);
       setUsername(userObj.name);
+      setUserId(userObj.id);
     }
   }, [navigate]);
 
@@ -67,7 +69,8 @@ function Dashboard() {
     if (newRoomName !== "") {
       socket.emit("create_room", {
          name: newRoomName,
-         creatorName: username
+         creatorName: username,
+         ownerId: userId
       });
       setShowCreateModal(false);
     } else {
@@ -174,7 +177,7 @@ function Dashboard() {
               {rooms.map((room) => (
                 <div key={room.id} className="room-card">
                   <h3>{room.name}</h3>
-                  <p>{room.creator}'s room</p>
+                  <p>{room.owner ? room.owner.name : "Someone"}'s room</p>
                   <button onClick={() => openJoinModal(room.id, room.name)}>Join</button>
                 </div>
               ))}
