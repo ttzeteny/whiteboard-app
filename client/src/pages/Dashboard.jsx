@@ -23,6 +23,7 @@ function Dashboard() {
   const [newRoomName, setNewRoomName] = useState("");
   const [roomToJoinId, setRoomToJoinId] = useState(null);
   const [roomToJoinName, setRoomToJoinName] = useState("");
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -51,6 +52,8 @@ function Dashboard() {
 
     const handlePreviousMessages = (msgs) => setMessageList(msgs);
     socket.on("previous_messages", handlePreviousMessages);
+
+    socket.emit("get_rooms");
 
     return () => {
       socket.off("connect", handleConnect);
@@ -89,6 +92,17 @@ function Dashboard() {
     setCurrentRoom(roomToJoinId);
     setMessageList([]);
     setShowJoinModal(false);
+  };
+
+  const toggleMenu = (roomId) => {
+    setOpenMenuId(openMenuId === roomId ? null : roomId);
+  };
+
+  const handleDeleteRoom = (roomId) => {
+    if (window.confirm("Are you sure you want to delete this room?")) {
+      socket.emit("delete_room", { roomId, userId });
+      setOpenMenuId(null);
+    }
   };
 
   const sendMessage = async () => {
@@ -175,9 +189,46 @@ function Dashboard() {
             </div>
             <div className="room-container">
               {rooms.map((room) => (
-                <div key={room.id} className="room-card">
-                  <h3>{room.name}</h3>
-                  <p>{room.owner ? room.owner.name : "Someone"}'s room</p>
+                <div key={room.id} className="room-card" style={{ position: 'relative' }}>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <h3 style={{ margin: 0 }}>{room.name}</h3>
+                    
+                    <div style={{ position: 'relative' }}>
+                      <button 
+                        onClick={() => toggleMenu(room.id)} 
+                        style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer', padding: '0 5px', lineHeight: '1' }}
+                      >
+                        ⋮
+                      </button>
+
+                      {openMenuId === room.id && (
+                        <div style={{
+                          position: 'absolute', right: 0, top: '100%',
+                          background: 'white', border: '1px solid #ccc', borderRadius: '5px',
+                          padding: '5px', zIndex: 10, minWidth: '100px',
+                          boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                        }}>
+                          <button 
+                            onClick={() => openJoinModal(room.id, room.name)} 
+                            style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '8px', cursor: 'pointer' }}
+                          >
+                            Join Room
+                          </button>
+                          
+                          {room.ownerId === userId && (
+                            <button 
+                              onClick={() => handleDeleteRoom(room.id)} 
+                              style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '8px', cursor: 'pointer', color: 'red' }}
+                            >
+                              Delete
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <p style={{ marginTop: '10px' }}>{room.owner ? room.owner.name : "Someone"}'s room</p>
                   <button onClick={() => openJoinModal(room.id, room.name)}>Join</button>
                 </div>
               ))}

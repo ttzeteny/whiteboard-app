@@ -35,6 +35,17 @@ io.on("connection", async (socket) => {
 
     socket.emit("room_list", allRooms);
 
+    socket.on("get_rooms", async () => {
+        try {
+            const allRooms = await prisma.room.findMany({
+                include: { owner: true }
+            });
+            socket.emit("room_list", allRooms);
+        } catch (e) {
+            console.error("Error fetching rooms", e);
+        }
+    });
+
     socket.on("create_room", async (data) => {
 
         try {
@@ -52,6 +63,38 @@ io.on("connection", async (socket) => {
             io.emit("room_list", updatedRooms);
         } catch (error) {
             console.error("An error occured while trying to create a room", error);
+        }
+    });
+
+    socket.on("delete_room", async (data) => {
+        const { roomId, userId } = data;
+
+        try {
+            const room = await prisma.room.findUnique({
+                where: { id: roomId }
+            });
+
+            if ( room && room.ownerId === userId ) {
+                await prisma.drawing.deleteMany({
+                    where: { roomId: roomId }
+                });
+
+                await prisma.room.delete({
+                    where: { id: roomId }
+                });
+
+                delete roomDrawings[roomId];
+                delete roomMessages[roomId];
+
+                const updatedRooms = await prisma.room.findMany({
+                    include: { owner: true }
+                });
+                io.emit("room_list", updatedRooms);
+
+                console.log("Room deleted: ", roomId);
+            }
+        } catch (e) {
+            console.error("An error occured while trying to delete a room", e);
         }
     });
 
