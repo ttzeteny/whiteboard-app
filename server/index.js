@@ -3,7 +3,8 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
-const prisma = require("./prismaClient")
+const prisma = require("./prismaClient");
+const bcrypt = require("bcryptjs");
 
 const port = 3001;
 
@@ -49,10 +50,20 @@ io.on("connection", async (socket) => {
     socket.on("create_room", async (data) => {
 
         try {
+
+            let hashedPassword = null;
+
+            if (data.isPrivate && data.password) {
+                const salt = await bcrypt.genSalt(10);
+                hashedPassword = await bcrypt.hash(data.password, salt);
+            }
+
             await prisma.room.create({
                 data: {
                     name: data.name,
-                    ownerId: data.ownerId
+                    ownerId: data.ownerId,
+                    isPrivate: data.isPrivate || false,
+                    password: hashedPassword
                 }
             });
 
@@ -98,9 +109,41 @@ io.on("connection", async (socket) => {
         }
     });
 
-    socket.on("join_room", async (roomId) => {
+    socket.on("join_room", async (data) => {
+        const { roomId, password, userId } = data;
+
+        try {
+            const room = await prisma.room.findUnique({ where: { id: roomId } });
+
+            if (!room) {
+                socket.emit("join_error", "Room not found");
+                return;
+            }
+
+            if (room.isPrivate && room.ownerId !== userId) {
+                if (!password || password.trim() === "") {
+                    socket.emit("join_error", "You need a password for this room!");
+                    return;
+                }
+
+                const isMatch = await bcrypt.compare(password, room.password);
+                if (!isMatch) {
+                    socket.emit("join_error", "Wrong password!");
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error("Error while trying to validate password: ", e);
+            socket.emit("join_error", "Server error during verification.");
+            return;
+        }
+
         socket.join(roomId);
-        console.log('User ${socket.id} joined room: ', roomId);
+        console.log(`User ${socket.id} joined room: ${roomId}`);
+
+        socket.emit("join_success", roomId);
+        
+        socket.to(roomId).emit("user_joined", socket.id);
 
         if (!roomDrawings[roomId]) {
             try {
@@ -115,11 +158,10 @@ io.on("connection", async (socket) => {
                     roomDrawings[roomId] = [];
                 }
             } catch (e) {
-                console.error("An error occured while trying to load a drawing", e);
+                console.error("Error while trying to load drawings:", e);
+                roomDrawings[roomId] = [];
             }
         }
-        
-        socket.to(roomId).emit("user_joined", socket.id);
 
         socket.emit("draw_history", roomDrawings[roomId]);
 
