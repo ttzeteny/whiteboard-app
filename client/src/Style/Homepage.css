@@ -1,0 +1,63 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.hero-section h2 {
+  font-size: 3.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(90deg, #00d2ff 0%, #3a7bd5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-section p {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 2rem;
+  max-width: 600px;
+}
+
+/* --- Buttons --- */
+.btn-primary {
+  padding: 12px 24px;
+  background-color: #3a7bd5;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.navbar button {
+    font-weight: bold;
+}
+
+.navbar button:hover {
+    background-color: #f2f4f5;
+}
+
+.navbar button {
+  margin-left: 10px;
+  background: transparent;
+  border: 1px solid #3a7bd5;
+  border-width: 2px;
+  color: #3a7bd5;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+}
