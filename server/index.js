@@ -109,6 +109,43 @@ io.on("connection", async (socket) => {
         }
     });
 
+    socket.on("delete_account", async (userId) => {
+        try {
+            console.log("Starting to delete user: ", userId);
+
+            const userRooms = await prisma.room.findMany({
+                where: { ownerId: userId }
+            });
+
+            for (const room of userRooms) {
+                await prisma.drawing.deleteMany({
+                    where: { roomId: room.id }
+                });
+                await prisma.room.delete({
+                    where: { id: room.id }
+                });
+                
+                delete roomDrawings[room.id];
+                delete roomMessages[room.id];
+            }
+
+            await prisma.user.delete({
+                where: { id: userId }
+            });
+
+            const updatedRooms = await prisma.room.findMany({
+                include: { owner: true }
+            });
+
+            io.emit("room_list", updatedRooms);
+
+            socket.emit("account_deleted");
+            console.log("Account deleted successfully: ", userId);
+        } catch (e) {
+            console.error("An error occured while trying to delete an account", e);
+        }
+    });
+
     socket.on("join_room", async (data) => {
         const { roomId, password, userId } = data;
 

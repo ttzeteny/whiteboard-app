@@ -20,6 +20,7 @@ function Dashboard() {
 
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   
   const [newRoomName, setNewRoomName] = useState("");
   const [roomToJoinId, setRoomToJoinId] = useState(null);
@@ -230,8 +231,43 @@ function Dashboard() {
         <h1><a href="/">BOARD IT</a></h1>
         <div style={{display: 'flex', alignItems: 'center', gap: '15px'}}>
             {currentRoom && <span style={{color: 'white', marginRight: '10px'}}>Room: {currentRoom}</span>}
-            <span style={{color: '#ffffff', fontWeight: 'bold'}}>{username}</span>
-            <button onClick={handleLogout} className="btn-secondary" style={{padding: '5px 12px', fontSize: '0.85rem'}}>Log out</button>
+            
+            <div style={{ position: 'relative' }}>
+              <div 
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', backgroundColor: 'rgba(255,255,255,0.1)', padding: '5px 15px 5px 5px', borderRadius: '30px' }}
+              >
+                <img 
+                  src={`https://ui-avatars.com/api/?name=${username}&background=random&color=fff&rounded=true`} 
+                  alt="avatar" 
+                  style={{ width: '40px', height: '40px', borderRadius: '50%' }}
+                />
+              </div>
+
+              {showUserMenu && (
+                <div style={{
+                  position: 'absolute', right: 0, top: '120%',
+                  background: 'white', border: '1px solid #ccc', borderRadius: '8px',
+                  padding: '5px', zIndex: 100, minWidth: '150px',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                }}>
+                  <button 
+                    onClick={() => navigate('/profile')} 
+                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '10px', cursor: 'pointer', color: '#333', fontWeight: 'bold' }}
+                  >
+                    View Profile
+                  </button>
+                  <hr style={{ margin: '5px 0', border: '0', borderTop: '1px solid #eee' }} />
+                  <button 
+                    onClick={handleLogout} 
+                    style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '10px', cursor: 'pointer', color: 'red', fontWeight: 'bold' }}
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+
         </div>
       </nav>
 
