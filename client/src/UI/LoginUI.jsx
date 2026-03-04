@@ -10,17 +10,22 @@ function LoginUI({ email, setEmail, password, setPassword, error, handleLogin })
       <div className="auth-container">
         <form className="auth-box" onSubmit={handleLogin}>
           <h2>Log in</h2>
-          {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
+          {error && <div className="error-banner">
+                    <span>⚠️</span> {error}
+                    </div>
+          }
           <input 
             type="email" 
-            placeholder="Email" 
+            placeholder="Email"
+            title="Enter your email address." 
             value={email}
             onChange={(e) => setEmail(e.target.value)} 
             required 
           />
           <input 
             type="password" 
-            placeholder="Password" 
+            placeholder="Password"
+            title="Enter your password."
             value={password}
             onChange={(e) => setPassword(e.target.value)} 
             required 

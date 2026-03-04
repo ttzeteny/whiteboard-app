@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import "./App.css";
+import "./Style/App.css";
 
 const Board = ({ socket, roomId }) => {
     const canvasRef = useRef(null);
@@ -166,6 +166,20 @@ const Board = ({ socket, roomId }) => {
                     }}
                 >
                     Save
+                </button>
+
+                <button 
+                    style={{ 
+                    marginLeft: '10px', 
+                    backgroundColor: '#ef4444', 
+                    color: 'white', 
+                    border: 'none',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    cursor: 'pointer'
+                    }}
+                >
+                    Reset Board
                 </button>
             </div>
 

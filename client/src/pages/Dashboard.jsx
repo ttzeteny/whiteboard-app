@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
-import '../App.css';
-import '../Dashboard.css';
+import '../Style/App.css';
+import '../Style/Dashboard.css';
 import Board from "../Board";
 
 const socket = io.connect("http://localhost:3001");

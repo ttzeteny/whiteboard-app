@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import SignupUI from "../UI/SignupUI";
 
 function Signup() {
 
@@ -13,6 +14,17 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+
+    const minLength = password.length >= 8;
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+
+    if (!minLength || !hasNumber || !hasSpecialChar || !hasUppercase || !hasLowercase) {
+      setError("Password does not meet the requirements!");
+      return;
+    }
 
     if (password != passwordAgain) {
       setError("Passwords do not match!");
@@ -41,24 +53,14 @@ function Signup() {
   };
 
   return (
-    <div>
-        <nav className="navbar">
-            <h1><a href="/">BOARD IT</a></h1>
-        </nav>
-        <div className="auth-container">
-            <form className="auth-box" onSubmit={handleSignup}>
-                <h2>Create Account</h2>
-                {error && <p style={{ color: 'red', fontSize: '0.9rem' }}>{error}</p>}
-                <input type="text" placeholder="Username" value={name} onChange={(e) => setName(e.target.value)} required />
-                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                <input type="password" placeholder="Password again" value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} required />
-                <button type="submit" className="btn-primary">Sign Up</button>
-                <p>Already have an account? <Link to="/login">Login</Link></p>
-            </form>
-        </div>
-    </div>
-    
+    <SignupUI 
+      name={name} setName={setName}
+      email={email} setEmail={setEmail}
+      password={password} setPassword={setPassword}
+      passwordAgain={passwordAgain} setPasswordAgain={setPasswordAgain}
+      error={error}
+      onSubmit={handleSignup}
+    />
   );
 }
 

@@ -257,6 +257,7 @@ io.on("connection", async (socket) => {
     socket.on("disconnect", () => {
         console.log("User disconnected ", socket.id);
     });
+
 });
 
 function generateID() {

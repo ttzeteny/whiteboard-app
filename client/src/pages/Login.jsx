@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import LoginUI from "../UI/LoginUI";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -34,22 +35,14 @@ function Login() {
   };
 
   return (
-    <div>
-      <nav className="navbar">
-            <h1><a href="/">BOARD IT</a></h1>
-      </nav>
-      <div className="auth-container">
-          <form className="auth-box" onSubmit={handleLogin}>
-            <h2>Log in</h2>
-            {error && <p style={{color: 'red', fontSize: '0.9rem'}}>{error}</p>}
-            <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} required />
-            <input type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} required />
-            <button type="submit" className="btn-primary">Login</button>
-            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
-          </form>
-      </div>
-    </div>
-    
+    <LoginUI 
+      email={email} 
+      setEmail={setEmail}
+      password={password}
+      setPassword={setPassword}
+      error={error}
+      handleLogin={handleLogin}
+    />
   );
 }
 export default Login;
